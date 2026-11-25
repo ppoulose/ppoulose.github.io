@@ -1,63 +1,201 @@
 
-function prepareHCl() {
+function changeMode() {
+    const mode = document.getElementById("inputMode").value;
 
-    const stock = Number(document.getElementById("stock").value);
-    const finalVolume = Number(document.getElementById("finalVolume").value);
+    document.getElementById("phGroup").style.display =
+        mode === "ph" ? "block" : "none";
 
-    const result = document.getElementById("result");
+    document.getElementById("concentrationGroup").style.display =
+        mode === "concentration" ? "block" : "none";
+}
 
-    if (!Number.isFinite(stock) || !Number.isFinite(finalVolume) ||
-        stock <= 0 || finalVolume <= 0) {
 
-        result.style.display = "block";
-        result.innerHTML =
-            "<h3>Invalid input</h3><p>Enter positive values for both inputs.</p>";
+function calculateDilution() {
+
+    const mode = document.getElementById("inputMode").value;
+
+    let initialC;
+
+    if (mode === "ph") {
+        const initialPH =
+            Number(document.getElementById("initialPH").value);
+
+        if (!Number.isFinite(initialPH)) {
+            showError("Please enter the initial pH.");
+            return;
+        }
+
+        initialC = Math.pow(10, -initialPH);
+
+    } else {
+        initialC =
+            Number(document.getElementById("initialC").value);
+
+        if (!Number.isFinite(initialC) || initialC <= 0) {
+            showError("Please enter a positive HCl concentration.");
+            return;
+        }
+    }
+
+    const targetPH =
+        Number(document.getElementById("targetPH").value);
+
+    const transfer =
+        Number(document.getElementById("transferVolume").value);
+
+    const finalVolume =
+        Number(document.getElementById("finalVolume").value);
+
+    if (!Number.isFinite(targetPH) ||
+        !Number.isFinite(transfer) ||
+        !Number.isFinite(finalVolume) ||
+        targetPH < 0 || targetPH > 14 ||
+        transfer <= 0 ||
+        finalVolume <= transfer) {
+
+        showError("Please check the target pH and dilution volumes.");
         return;
     }
 
-    // Target concentration for pH 4
-    const targetConcentration = Math.pow(10, -4);
+    const targetC = Math.pow(10, -targetPH);
 
-    if (stock < targetConcentration) {
-        result.style.display = "block";
-        result.innerHTML =
-            "<h3>Stock solution too dilute</h3>" +
-            "<p>The stock concentration must be at least 0.0001 M.</p>";
+    if (initialC < targetC * (1 - 1e-12)) {
+        showError("The initial solution is already more dilute than the target.");
         return;
     }
 
-    // C1 V1 = C2 V2
-    const stockVolume =
-        (targetConcentration * finalVolume) / stock;
+    if (Math.abs(initialC - targetC) / targetC < 1e-12) {
+        showError("The initial solution is already at the target concentration. No dilution is needed.");
+        return;
+    }
 
-    const waterVolume = finalVolume - stockVolume;
+    const dilutionFactor = finalVolume / transfer;
 
-    result.style.display = "block";
+    const totalFactor = initialC / targetC;
 
-    result.innerHTML = `
-        <h3>Preparation calculation</h3>
+    // Number of full dilution steps
+    const fullSteps = Math.floor(
+        Math.log(totalFactor) / Math.log(dilutionFactor) + 1e-12
+    );
 
-        <p>Target pH: <strong>4</strong></p>
+    let currentC = initialC;
+    let rows = [];
 
-        <p>Target HCl concentration:</p>
-        <strong>1.0 × 10⁻⁴ mol/L</strong>
+    // Initial stock
+    rows.push({
+        step: "Stock",
+        concentration: currentC,
+        pH: -Math.log10(currentC),
+        transfer: "—",
+        final: "—"
+    });
 
-        <p>Volume of stock HCl required:</p>
+    // Full dilution steps
+    for (let i = 1; i <= fullSteps; i++) {
 
-        <div class="result-value">
-            ${stockVolume.toFixed(4)} mL
+        currentC = currentC / dilutionFactor;
+
+        rows.push({
+            step: i,
+            concentration: currentC,
+            pH: -Math.log10(currentC),
+            transfer: transfer,
+            final: finalVolume
+        });
+    }
+
+    // Final partial dilution, if required
+    if (currentC > targetC * (1 + 1e-12)) {
+
+        const requiredTransfer =
+            targetC * finalVolume / currentC;
+
+        currentC = targetC;
+
+        rows.push({
+            step: "Final",
+            concentration: currentC,
+            pH: targetPH,
+            transfer: requiredTransfer,
+            final: finalVolume
+        });
+    }
+
+    let html = `
+        <h3>Serial Dilution Plan</h3>
+
+        <p>Initial concentration:
+        <strong>${initialC.toExponential(4)} M</strong></p>
+
+        <p>Initial theoretical pH:
+        <strong>${(-Math.log10(initialC)).toFixed(3)}</strong></p>
+
+        <p>Target pH:
+        <strong>${targetPH}</strong></p>
+
+        <p>Number of dilution steps:
+        <strong>${rows.length - 1}</strong></p>
+
+        <div style="overflow-x:auto">
+        <table class="dilution-table">
+            <thead>
+                <tr>
+                    <th>Step</th>
+                    <th>Transfer (mL)</th>
+                    <th>Final volume (mL)</th>
+                    <th>Concentration (M)</th>
+                    <th>Expected pH</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    rows.forEach(row => {
+
+        html += `
+            <tr>
+                <td>${row.step}</td>
+                <td>${row.transfer === "—" ? "—" :
+                    Number(row.transfer).toFixed(4)}</td>
+                <td>${row.final === "—" ? "—" :
+                    Number(row.final).toFixed(2)}</td>
+                <td>${row.concentration.toExponential(4)}</td>
+                <td>${row.pH.toFixed(3)}</td>
+            </tr>
+        `;
+    });
+
+    html += `
+            </tbody>
+        </table>
         </div>
 
-        <p>Final solution volume:</p>
-        <strong>${finalVolume.toFixed(2)} mL</strong>
-
-        <p>Approximate water volume:</p>
-        <strong>${waterVolume.toFixed(4)} mL</strong>
+        <p class="procedure">
+            <strong>Procedure:</strong> Begin with the stock solution.
+            At each step, transfer the indicated volume into a
+            suitable volumetric flask and dilute with water to
+            the specified final volume. Mix thoroughly before
+            taking an aliquot for the next step.
+        </p>
 
         <p>
-            Measure the calculated stock acid volume,
-            add it slowly to some water, and then dilute
-            with water to the specified final volume.
+            The final step may use a smaller transfer volume
+            to reach the target concentration exactly.
         </p>
+    `;
+
+    const result = document.getElementById("result");
+    result.innerHTML = html;
+    result.style.display = "block";
+}
+
+
+function showError(message) {
+    const result = document.getElementById("result");
+
+    result.style.display = "block";
+    result.innerHTML = `
+        <h3>Check your inputs</h3>
+        <p>${message}</p>
     `;
 }
