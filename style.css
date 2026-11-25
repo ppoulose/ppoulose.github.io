@@ -22,6 +22,9 @@ body {
 /* Navigation */
 
 header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     border-bottom: 1px solid #e5eaf0;
     background: #ffffff;
 }
