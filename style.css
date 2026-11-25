@@ -1,0 +1,224 @@
+
+/* General settings */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", sans-serif;
+    color: #263449;
+    background: #ffffff;
+    line-height: 1.7;
+}
+
+/* Navigation */
+
+header {
+    border-bottom: 1px solid #e5eaf0;
+    background: #ffffff;
+}
+
+.navbar {
+    max-width: 1100px;
+    margin: auto;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: 700;
+    color: #17365d;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 28px;
+}
+
+.nav-links a {
+    color: #45556b;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.nav-links a:hover {
+    color: #2672b8;
+}
+
+/* Main introduction */
+
+.hero {
+    max-width: 1100px;
+    margin: auto;
+    padding: 110px 24px 120px;
+}
+
+.eyebrow {
+    color: #2874b8;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+}
+
+.hero h1 {
+    font-size: clamp(42px, 6vw, 64px);
+    color: #17365d;
+    line-height: 1.15;
+    margin-bottom: 15px;
+}
+
+.hero h2 {
+    font-size: 23px;
+    font-weight: 500;
+    color: #52647a;
+}
+
+.affiliation {
+    color: #718096;
+    margin-top: 8px;
+}
+
+.intro {
+    max-width: 650px;
+    font-size: 18px;
+    margin-top: 30px;
+    color: #52647a;
+}
+
+/* Buttons */
+
+.hero-links {
+    display: flex;
+    gap: 14px;
+    margin-top: 35px;
+    flex-wrap: wrap;
+}
+
+.primary-button,
+.secondary-button {
+    display: inline-block;
+    padding: 11px 22px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.primary-button {
+    background: #17365d;
+    color: white;
+}
+
+.secondary-button {
+    border: 1px solid #cbd5e1;
+    color: #17365d;
+}
+
+/* Content sections */
+
+.content-section {
+    padding: 80px 24px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.content-section h2 {
+    font-size: 34px;
+    color: #17365d;
+    margin-bottom: 20px;
+}
+
+.content-section > p:not(.eyebrow) {
+    max-width: 750px;
+    color: #58677a;
+}
+
+.alternate {
+    max-width: none;
+    background: #f5f8fc;
+    padding-left: max(24px, calc((100% - 1052px) / 2));
+    padding-right: max(24px, calc((100% - 1052px) / 2));
+}
+
+/* Research cards */
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-top: 35px;
+}
+
+.info-card {
+    padding: 28px;
+    border: 1px solid #e1e8f0;
+    border-radius: 7px;
+    background: white;
+}
+
+.info-card h3 {
+    color: #17365d;
+    font-size: 19px;
+    margin-bottom: 12px;
+}
+
+.info-card p {
+    font-size: 14px;
+    color: #64748b;
+}
+
+/* Contact and footer */
+
+a {
+    color: #2672b8;
+}
+
+footer {
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 1px solid #e5eaf0;
+    color: #8491a2;
+    font-size: 13px;
+}
+
+/* Mobile layout */
+
+@media (max-width: 700px) {
+
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .nav-links {
+        gap: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero {
+        padding-top: 75px;
+        padding-bottom: 80px;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .content-section {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+}
