@@ -120,3 +120,42 @@ footer {
         padding: 24px;
     }
 }
+.tool-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0 30px;
+}
+
+.tool-links a {
+    text-decoration: none;
+    padding: 9px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    color: #17365d;
+    font-size: 14px;
+}
+
+.tool-links a:hover {
+    background: #eef5fb;
+}
+
+.notes {
+    margin-top: 35px;
+    padding: 20px;
+    background: #f5f8fc;
+    border-radius: 7px;
+}
+
+.safety {
+    margin-top: 20px;
+    padding: 20px;
+    background: #fff8e8;
+    border-left: 4px solid #d49b36;
+    border-radius: 5px;
+}
+
+.notes h3,
+.safety h3 {
+    color: #17365d;
+}
