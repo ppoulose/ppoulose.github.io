@@ -7,8 +7,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Chaks | Prepare pH 4 HCl</title>
-
+    <title>Chaks | Serial Dilution of HCl</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -21,69 +20,89 @@
 
 <main>
 
-    <h2>Preparation of pH 4 HCl</h2>
-
     <div class="tool-links">
         <a href="index.html">Neutralization Calculator</a>
-        <a href="prepare-hcl.html">Prepare pH 4 HCl</a>
+        <a href="prepare-hcl.html">Serial Dilution of HCl</a>
     </div>
 
+    <h2>Preparation of Dilute HCl</h2>
+
     <p class="intro">
-        Calculate the volume of stock hydrochloric acid
-        required to prepare a dilute HCl solution at pH 4.
+        Calculate the serial dilution steps required
+        to prepare HCl at a specified target pH.
     </p>
 
     <div class="input-group">
-        <label for="stock">Stock HCl concentration (mol/L)</label>
-        <input type="number" id="stock"
-               min="0" step="any"
-               placeholder="e.g. 0.1">
+        <label>Initial solution specified as</label>
+        <select id="inputMode" onchange="changeMode()">
+            <option value="ph">Initial pH</option>
+            <option value="concentration">HCl concentration (M)</option>
+        </select>
+    </div>
+
+    <div class="input-group" id="phGroup">
+        <label for="initialPH">Initial pH</label>
+        <input type="number" id="initialPH"
+               step="any" placeholder="e.g. 1">
+    </div>
+
+    <div class="input-group" id="concentrationGroup"
+         style="display:none">
+        <label for="initialC">Initial HCl concentration (M)</label>
+        <input type="number" id="initialC"
+               min="0" step="any" placeholder="e.g. 0.1">
     </div>
 
     <div class="input-group">
-        <label for="finalVolume">Desired final volume (mL)</label>
-        <input type="number" id="finalVolume"
-               min="0" step="any"
-               placeholder="e.g. 100">
+        <label for="targetPH">Target pH</label>
+        <input type="number" id="targetPH"
+               value="4" step="any">
     </div>
 
-    <button onclick="prepareHCl()">
-        Calculate
+    <div class="input-group">
+        <label for="transferVolume">
+            Volume transferred at each step (mL)
+        </label>
+        <input type="number" id="transferVolume"
+               value="100" min="0" step="any">
+    </div>
+
+    <div class="input-group">
+        <label for="finalVolume">
+            Final volume at each dilution step (mL)
+        </label>
+        <input type="number" id="finalVolume"
+               value="1000" min="0" step="any">
+    </div>
+
+    <button onclick="calculateDilution()">
+        Calculate dilution plan
     </button>
 
     <div id="result" class="result"></div>
 
     <section class="notes">
         <h3>Principle</h3>
-
         <p>
             For dilute HCl, assuming complete dissociation:
         </p>
-
-        <p><strong>[H+] = 10^-pH</strong></p>
-
+        <p><strong>pH = -log₁₀[H⁺]</strong></p>
         <p>
-            The dilution calculation uses:
+            Dilution is calculated using:
         </p>
-
         <p><strong>C₁V₁ = C₂V₂</strong></p>
-
-        <p>
-            The target concentration for pH 4 is
-            0.0001 mol/L.
-        </p>
     </section>
 
     <section class="safety">
         <h3>Laboratory safety</h3>
         <p>
-            Wear appropriate eye protection, gloves and a lab coat.
-            Add acid slowly to water, never water to concentrated acid.
-            Prepare solutions under teacher supervision.
+            Wear safety goggles, gloves and a lab coat.
+            Always add acid to water, never water to acid.
+            Work under teacher supervision.
         </p>
         <p>
-            For very small calculated volumes, use a suitable
-            calibrated micropipette or prepare an intermediate dilution.
+            Use calibrated volumetric glassware.
+            Check the pH experimentally after each dilution.
         </p>
     </section>
 
